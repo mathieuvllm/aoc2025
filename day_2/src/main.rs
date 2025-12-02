@@ -45,7 +45,6 @@ fn main() {
     let ranges = parse("input.txt").unwrap();
 
     let mut total: u128 = 0;
-    let mut length = 0;
     for &(first, last) in ranges.iter() {
         if let Some(invalid) = invalid_in_range(first, last) {
             let sum: u128 = invalid.iter().sum();
