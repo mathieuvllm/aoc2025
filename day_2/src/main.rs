@@ -1,4 +1,4 @@
-fn is_valid(id: u64) -> bool {
+fn is_valid(id: u128) -> bool {
     let id = id.to_string();
     if !(id.len().is_multiple_of(2)) {
         return true;
@@ -10,7 +10,7 @@ fn is_valid(id: u64) -> bool {
     parts.0 != parts.1
 }
 
-fn invalid_in_range(first: u64, last: u64) -> Option<Vec<u64>> {
+fn invalid_in_range(first: u128, last: u128) -> Option<Vec<u128>> {
     let mut invalid = vec![];
 
     for id in first..=last {
@@ -25,12 +25,32 @@ fn invalid_in_range(first: u64, last: u64) -> Option<Vec<u64>> {
     }
 }
 
+fn parse(path: &str) -> std::io::Result<Vec<(u128, u128)>> {
+    let file = std::fs::read_to_string(path)?;
+    let lines: Vec<&str> = file.lines().collect();
+    let line = lines[0];
+
+    Ok(line
+        .split(',')
+        .map(|pair| {
+            let mut parts = pair.split('-');
+            let a = parts.next().unwrap().parse::<u128>().unwrap();
+            let b = parts.next().unwrap().parse::<u128>().unwrap();
+            (a, b)
+        })
+        .collect())
+}
+
 fn main() {
-    let ret = invalid_in_range(11, 22);
-    let mut total: u64 = 0;
-    if let Some(invalid) = ret {
-        let sum: u64 = invalid.iter().sum();
-        total += sum;
+    let ranges = parse("input.txt").unwrap();
+
+    let mut total: u128 = 0;
+    let mut length = 0;
+    for &(first, last) in ranges.iter() {
+        if let Some(invalid) = invalid_in_range(first, last) {
+            let sum: u128 = invalid.iter().sum();
+            total += sum;
+        }
     }
 
     println!("{total}");
