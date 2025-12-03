@@ -36,8 +36,28 @@ fn max_joltage(bank: Vec<u8>) -> u32 {
     (bank[a] * 10 + bank[b]) as u32
 }
 
+fn max_joltage_2(bank: Vec<u8>) -> u64 {
+    let mut indexes = vec![];
+    indexes.push(max_index(bank[..bank.len() - 11].to_vec()));
+
+    for n in (0usize..=10).rev() {
+        let last = *indexes.last().unwrap();
+        indexes.push(max_index(bank[last + 1..bank.len() - n].to_vec()) + last + 1);
+    }
+
+    let mut mult: u64 = 1;
+    let mut sum: u64 = 0;
+
+    for i in (0usize..=11).rev() {
+        sum += (bank[indexes[i]] as u64) * mult;
+        mult *= 10;
+    }
+
+    sum
+}
+
 fn main() {
     let input = parse("input.txt").ok().unwrap();
-    let sum: u32 = input.iter().map(|v| max_joltage(v.clone())).sum();
+    let sum: u64 = input.iter().map(|v| max_joltage_2(v.clone())).sum();
     println!("{sum}");
 }
