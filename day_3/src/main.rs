@@ -9,11 +9,7 @@ fn parse(path: &str) -> io::Result<Vec<Vec<u8>>> {
 
     for line in reader.lines() {
         let line = line?;
-        banks.push(
-            line.chars()
-                .map(|x| x.to_digit(10).unwrap() as u8)
-                .collect(),
-        );
+        banks.push(line.bytes().map(|b| b - b'0').collect());
     }
 
     Ok(banks)
