@@ -15,7 +15,7 @@ fn parse(path: &str) -> io::Result<Vec<Vec<char>>> {
     Ok(rows)
 }
 
-fn neighbors(rows: Vec<Vec<char>>, row_idx: usize, col_idx: usize) -> u8 {
+fn neighbors(rows: &Vec<Vec<char>>, row_idx: usize, col_idx: usize) -> u8 {
     if rows[row_idx][col_idx] != '@' {
         return 9;
     }
@@ -65,18 +65,24 @@ fn print_grid(grid: Vec<Vec<char>>) {
 
 fn main() {
     let input = parse("input.txt").ok().unwrap();
-    let mut new: Vec<Vec<char>> = input.clone();
+    let mut clone1: Vec<Vec<char>> = input.clone();
+    let mut clone2 = input.clone();
     let col_len = input.len();
     let row_len = input[0].len();
-    let mut count = 0;
+    let mut count: u32 = 0;
+    let mut last_count: u32 = 1;
 
-    for row_idx in 0..col_len {
-        for col_idx in 0..row_len {
-            if neighbors(input.clone(), row_idx, col_idx) < 4 {
-                count += 1;
-                new[row_idx][col_idx] = 'x';
+    while last_count != count {
+        last_count = count;
+        for row_idx in 0..col_len {
+            for col_idx in 0..row_len {
+                if neighbors(&clone2, row_idx, col_idx) < 4 {
+                    count += 1;
+                    clone1[row_idx][col_idx] = 'x';
+                }
             }
         }
+        clone2 = clone1.clone();
     }
 
     println!("{count}");
