@@ -7,7 +7,22 @@ struct Inventory {
     available: Vec<u64>,
 }
 
-impl Inventory {}
+impl Inventory {
+    fn get_fresh(&self) -> Vec<u64> {
+        let mut fresh: Vec<u64> = vec![];
+
+        for &x in self.available.iter() {
+            for &(min, max) in self.ranges.iter() {
+                if x >= min && x <= max {
+                    fresh.push(x);
+                    break;
+                }
+            }
+        }
+
+        fresh
+    }
+}
 
 fn parse(path: &str) -> io::Result<Inventory> {
     let file = File::open(path)?;
@@ -41,6 +56,8 @@ fn parse(path: &str) -> io::Result<Inventory> {
 }
 
 fn main() {
-    let input = parse("example.txt").ok().unwrap();
-    println!("{:?}", input);
+    let input = parse("input.txt").ok().unwrap();
+    let fresh = input.get_fresh();
+    let sum = fresh.len();
+    println!("{sum:?}");
 }
